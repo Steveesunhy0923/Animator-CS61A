@@ -1,0 +1,327 @@
+/* All styling for the Animator app. The .gleam files only attach class names. */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+/* ── Layout: two columns ─────────────────────────────────────────────────── */
+
+.app {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #1a1a2e;
+  color: #d4c5a0;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+}
+
+/* Left column: the code editor. */
+.code-col {
+  width: 42%;
+  min-width: 320px;
+  max-width: 720px;
+  flex-shrink: 0;
+  display: flex;
+  border-right: 1px solid #3a3a5e;
+  background: #0f0f1e;
+}
+
+/* The code column stays in the DOM when collapsed, so CodeMirror keeps its
+   state; hiding it gives the right column the full width. */
+.app.code-hidden .code-col { display: none; }
+
+/* A small emoji button (the code pane's collapse toggle, and the playback
+   controls once they exist). */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a4a;
+  color: #d4c5a0;
+  border: 1px solid #4a4a8a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 8px;
+}
+.icon-btn:hover { background: #3a3a5e; }
+
+/* ── Code panel (left column) ───────────────────────────────────────────── */
+
+.code-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #1a1a3e;
+  border-bottom: 1px solid #3a3a5e;
+}
+.code-title {
+  color: #e8d8b0;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* The menu of drawings, between the title and the hide button. */
+.drawing-select {
+  flex: 1;
+  min-width: 0;
+  max-width: 260px;
+  margin-right: auto;
+  padding: 4px 8px;
+  background: #0d0d1a;
+  color: #e8d8b0;
+  border: 1px solid #4a4a8a;
+  border-radius: 4px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  cursor: pointer;
+}
+.drawing-select:hover { border-color: #6a6aaa; }
+.drawing-select:focus-visible { outline: 1px solid #89ddff; outline-offset: 1px; }
+
+/* Wrapper holding the editor. */
+.code-editor-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+}
+/* CodeMirror mount node: grows to fill the panel. */
+.code-editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  background: #0d0d1a;
+}
+.code-editor .cm-editor { width: 100%; height: 100%; }
+
+/* Collapsible reference of the built-ins available to draw functions. */
+.reference {
+  margin: 8px 14px 0;
+  border: 1px solid #3a3a5e;
+  border-radius: 4px;
+  background: #0d0d1a;
+  overflow: hidden;
+}
+.reference-summary {
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #b8a888;
+  font-family: monospace;
+  font-size: 12px;
+  user-select: none;
+}
+.reference-summary:hover { color: #e8d8b0; }
+.reference-body {
+  padding: 4px 12px 10px;
+  border-top: 1px solid #3a3a5e;
+  /* The reference is long, so it scrolls rather than squeezing the editor out. */
+  max-height: 40vh;
+  overflow-y: auto;
+}
+.reference-group { margin-top: 8px; }
+.reference-group-title {
+  color: #8a8aca;
+  font-family: monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.reference-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 1px 0;
+}
+.reference-sig {
+  color: #89ddff;
+  font-family: monospace;
+  font-size: 12px;
+  white-space: pre;
+}
+.reference-desc { color: #6a7a8a; font-size: 11px; }
+
+/* ── Animation area (right column) ──────────────────────────────────────── */
+
+.canvas-area {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a14;
+}
+
+/* The space above the controls, where the canvas is centred. */
+.stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+/* The animation's controls, under the canvas like a video player's: the time
+   slider on its own row, then the shape and speed sliders side by side. */
+.controls {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px 12px;
+  background: #12122a;
+  border-top: 1px solid #3a3a5e;
+}
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+/* The restart and pause buttons, then the time slider filling the rest. */
+.playback-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.playback-row .control { margin-left: 4px; }
+.playback-btn {
+  flex-shrink: 0;
+  gap: 6px;
+  min-width: 6.5em;
+  font-size: 12px;
+}
+.playback-btn:disabled { cursor: default; opacity: 0.4; }
+/* One slider, with its name before it and its value after it. */
+.control {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.control-name {
+  width: 4.8em;
+  color: #8a8aca;
+  font-family: monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.slider {
+  flex: 1;
+  min-width: 0;
+  accent-color: #e8d8b0;
+  cursor: pointer;
+}
+.slider:disabled { cursor: default; opacity: 0.4; }
+.time-slider { accent-color: #89ddff; }
+.control-value {
+  min-width: 6ch;
+  color: #e8d8b0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* What's wrong with the code, over the bottom of the animation area (which draws
+   nothing while the code has an error): its kind, its message, and its line. */
+.error-panel {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 5;
+  max-height: 45%;
+  overflow: auto;
+  padding: 12px 14px;
+  background: #24111a;
+  border: 1px solid #6a2f3e;
+  border-left: 4px solid #ff6b6b;
+  border-radius: 4px;
+}
+.error-kind {
+  color: #ff8a8a;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.error-message {
+  color: #ffe0e0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+/* The line of code the error is on, with its line number as in the editor. */
+.error-source {
+  margin-top: 8px;
+  padding: 6px 10px;
+  overflow-x: auto;
+  background: #140a10;
+  border-radius: 3px;
+  color: #d4c5a0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+}
+.error-source-line {
+  display: inline-block;
+  min-width: 2ch;
+  margin-right: 12px;
+  color: #ff8a8a;
+  text-align: right;
+}
+
+/* The button over the stage's top right corner that hides the axes or shows them
+   again. It is dimmed while they are hidden. */
+.axes-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.axes-button[aria-pressed="false"] { opacity: 0.5; }
+
+/* Button that reveals the code column again when it is hidden. */
+.reveal-code {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+}
+
+/* A centred square that fits the (possibly non-square) animation area. Give your
+   <canvas> this class, so that drawings aren't stretched. */
+.canvas {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  /* A shade lighter than the area around it, to show where drawings can go. */
+  background: #0e0e1c;
+}
+
